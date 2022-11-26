@@ -1,23 +1,51 @@
-import logo from './logo.svg';
 import './App.css';
+import foods from './foods.json';
+import { useState } from 'react';
+import FoodBox from './components/Foodbox';
+import SearchBar from './components/Search';
 
 function App() {
+  const [foodList, setFoodList] = useState(foods);
+
+  function handleSearch(event) {
+    let filteredFood = foodList.filter((element) => {
+      return element.name
+        .toLowerCase()
+        .includes(event.target.value.toLowerCase());
+    });
+    setFoodList(filteredFood);
+  }
+
+  const handleDeleteFood = (name) => {
+    const deletedFood = foodList.filter((item) => {
+      return item.name !== name;
+    });
+    setFoodList(deletedFood);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="header">
+      <header>Food List</header>
+      <SearchBar handleSearch={handleSearch} />
+      <div className="App">
+        <>
+          {foodList.map((food) => {
+            return (
+              <>
+                <FoodBox
+                  food={{
+                    name: food.name,
+                    calories: food.calories,
+                    image: food.image,
+                    servings: food.servings,
+                  }}
+                  onDelete={handleDeleteFood}
+                />
+              </>
+            );
+          })}
+        </>
+      </div>
     </div>
   );
 }
